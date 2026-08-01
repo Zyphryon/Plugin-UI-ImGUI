@@ -89,10 +89,10 @@ namespace Plugin
             }
         }
 
-        Graphic::Transient<ImDrawVert> VtxSlice = mGraphics->AllocateTransientVertices<ImDrawVert>(Commands.TotalVtxCount);
-        Graphic::Transient<ImDrawIdx>  IdxSlice = mGraphics->AllocateTransientIndices<ImDrawIdx>(Commands.TotalIdxCount);
+        Graphic::Transient<ImDrawVert> VtxSlice = mGraphics->AllocateInFlightVertices<ImDrawVert>(Commands.TotalVtxCount);
+        Graphic::Transient<ImDrawIdx>  IdxSlice = mGraphics->AllocateInFlightIndices<ImDrawIdx>(Commands.TotalIdxCount);
 
-        Graphic::Transient<Matrix4x4> UboSlice = mGraphics->AllocateTransientUniforms<Matrix4x4>(1);
+        Graphic::Transient<Matrix4x4> UboSlice = mGraphics->AllocateInFlightUniforms<Matrix4x4>(1);
         UboSlice[0] = Matrix4x4::CreateOrthographic(
                 Commands.DisplayPos.x,
                 Commands.DisplayPos.x + Commands.DisplaySize.x,
@@ -105,6 +105,9 @@ namespace Plugin
         UInt32 IdxOffset = 0;
 
         const Bool SupportsVertexBaseOffset = mGraphics->GetDescription().Capabilities.SupportsBaseVertex;
+
+        // The technique declares a static sampler, shared by every draw.
+        const Graphic::Object Sampler = mTechnique->GetReflection().Samplers.GetFront().Handle;
 
         for (const ConstPtr<ImDrawList> CommandList : Commands.CmdLists)
         {
@@ -131,7 +134,7 @@ namespace Plugin
                     continue;
                 }
 
-                Ref<Graphic::Command> GfxCommand = mGraphics->AllocateTransientCommands(1).GetFront();
+                Ref<Graphic::Command> GfxCommand = mGraphics->AllocateInFlightCommand();
 
                 // Devices without base-vertex support ignore vertex base offset.
                 const UInt32    Base     = VtxOffset + Command.VtxOffset;
@@ -150,9 +153,9 @@ namespace Plugin
                 GfxCommand.Pipeline = mTechnique->GetHandle();
                 GfxCommand.Vertices.Append(Vertices);
                 GfxCommand.Indices = IdxSlice.GetStream();
-                GfxCommand.Uniforms[Enum::Cast(Graphic::UniformScope::Global)] = UboSlice.GetStream();
+                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Frame)] = UboSlice.GetStream();
                 GfxCommand.Textures.Append(static_cast<Graphic::Object>(Command.GetTexID()));
-                GfxCommand.Samplers.Append(Graphic::Sampler());
+                GfxCommand.Samplers.Append(Sampler);
 
                 GfxCommand.Parameters = {
                     .Count     = Command.ElemCount,
@@ -196,6 +199,7 @@ namespace Plugin
             Texture->Width,
             Texture->Height,
             1,
+            1,
             Graphic::Multisample::X1,
             Blob::Borrow<Byte>(static_cast<ConstPtr<Byte>>(Texture->GetPixels()), Size));
         Texture->SetTexID(Handle);
@@ -230,6 +234,7 @@ namespace Plugin
 
             mGraphics->UpdateTexture(
                 Texture->GetTexID(),
+                0,
                 0,
                 X,
                 Y,

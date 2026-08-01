@@ -83,5 +83,5 @@ TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE})
 ## Properties
 ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-ZyApplyCompileOptions(${PROJECT_NAME})
-ZyEmbedResources(TARGET ${PROJECT_NAME} DIRECTORY "Resources")
+ZyApplyOptions(${PROJECT_NAME})
+ZyRegisterResources(TARGET ${PROJECT_NAME} DIRECTORY "Resources")

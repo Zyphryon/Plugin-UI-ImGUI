@@ -25,10 +25,22 @@
     },
     "Signature": {
         "Textures": [
-            "Albedo"
+            { "Name": "Albedo", "Frequency": "Material", "Register": 0, "Visibility": "Fragment" }
+        ],
+        "Samplers": [
+            {
+                "Name": "Albedo",
+                "Frequency": "Material",
+                "Register": 0,
+                "Visibility": "Fragment",
+                "Filter": "Linear",
+                "AddressModeU": "Clamp",
+                "AddressModeV": "Clamp",
+                "AddressModeW": "Clamp"
+            }
         ],
         "Uniforms": [
-            { "Slot": "Global", "Name": "Camera", "Type": "Float4", "Count": 4 }
+            { "Name": "Camera", "Frequency": "Frame", "Type": "Float4", "Count": 4 }
         ]
     },
     "Program": {
