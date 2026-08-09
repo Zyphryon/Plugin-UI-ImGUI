@@ -28,7 +28,17 @@ namespace Plugin
         mGraphics = Host.GetService<Graphic::Service>();
 
         ConstRetainer<Content::Service> Content = Host.GetService<Content::Service>();
-        mTechnique = Content->Load<Graphic::Technique>("Embedded://Technique/UI/ImGui.vfx");
+
+        for (const Kind Type : Enum::GetValues<Kind>())
+        {
+            Str Path = Str::Print<"Embedded://Technique/UI/ImGui-{0}.vfx">(Enum::GetName(Type));
+
+            mTechniques[Enum::Cast(Type)] = Content->Load<Graphic::Technique>(Move(Path));
+        }
+
+        mSampler = mGraphics->ObtainSampler(Graphic::Sampler {
+            .Filter = Graphic::TextureFilter::Linear
+        });
 
         ConstRef<Graphic::Capabilities> Capabilities = mGraphics->GetDescription().Capabilities;
 
@@ -61,10 +71,13 @@ namespace Plugin
 
     void ImGuiRenderer::Submit(ConstRef<ImDrawData> Commands)
     {
-        // Abort drawing if the technique has not finished loading or compiling.
-        if (!mTechnique->HasCompleted())
+        // Abort drawing if either technique has not finished loading or compiling.
+        for (ConstRetainer<Graphic::Technique> Technique : mTechniques)
         {
-            return;
+            if (!Technique->HasCompleted())
+            {
+                return;
+            }
         }
 
         // Handle all pending texture operations.
@@ -101,13 +114,13 @@ namespace Plugin
                 -1.0f,
                 +1.0f);
 
+        // Captured up front, since the per-draw blocks allocated below share the same arena.
+        const Graphic::Stream Camera = UboSlice.GetStream();
+
         UInt32 VtxOffset = 0;
         UInt32 IdxOffset = 0;
 
         const Bool SupportsVertexBaseOffset = mGraphics->GetDescription().Capabilities.SupportsBaseVertex;
-
-        // The technique declares a static sampler, shared by every draw.
-        const Graphic::Object Sampler = mTechnique->GetReflection().Samplers.GetFront().Handle;
 
         for (const ConstPtr<ImDrawList> CommandList : Commands.CmdLists)
         {
@@ -134,6 +147,20 @@ namespace Plugin
                     continue;
                 }
 
+                const Graphic::Object Texture = static_cast<Graphic::Object>(Command.GetTexID());
+                const UInt32          Slice   = static_cast<UInt32>(Command.GetTexID() >> 32);
+
+                // Only array draws carry a block; the 2D technique never declares one to read.
+                Graphic::Stream Instance;
+
+                if (Slice > 0)
+                {
+                    Graphic::Transient<UInt32> Block = mGraphics->AllocateInFlightUniforms<UInt32>(1);
+                    Block[0] = Slice - 1;
+
+                    Instance = Block.GetStream();
+                }
+
                 Ref<Graphic::Command> GfxCommand = mGraphics->AllocateInFlightCommand();
 
                 // Devices without base-vertex support ignore vertex base offset.
@@ -145,19 +172,25 @@ namespace Plugin
                     Vertices.Offset += Base * sizeof(ImDrawVert);
                 }
 
+                ConstRetainer<Graphic::Technique> Technique =
+                    Slice > 0 ? mTechniques[Enum::Cast(Kind::Texture2DArray)]
+                              : mTechniques[Enum::Cast(Kind::Texture2D)];
+
                 GfxCommand.Scissor = Graphic::Scissor(
                     static_cast<UInt16>(MinX),
                     static_cast<UInt16>(MinY),
                     static_cast<UInt16>(MaxX - MinX),
                     static_cast<UInt16>(MaxY - MinY));
-                GfxCommand.Pipeline = mTechnique->GetHandle();
+                GfxCommand.Pipeline = Technique->GetHandle();
                 GfxCommand.Vertices.Append(Vertices);
                 GfxCommand.Indices = IdxSlice.GetStream();
-                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Frame)] = UboSlice.GetStream();
-                GfxCommand.Textures.Append(static_cast<Graphic::Object>(Command.GetTexID()));
-                GfxCommand.Samplers.Append(Sampler);
+                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Frame)]    = Camera;
+                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Instance)] = Instance;
+                GfxCommand.Textures.Append(Texture);
+                GfxCommand.Samplers.Append(mSampler);
 
-                GfxCommand.Parameters = {
+                GfxCommand.Parameters =
+                {
                     .Count     = Command.ElemCount,
                     .Base      = SupportsVertexBaseOffset ? static_cast<SInt32>(Base) : 0,
                     .Offset    = Command.IdxOffset + IdxOffset,

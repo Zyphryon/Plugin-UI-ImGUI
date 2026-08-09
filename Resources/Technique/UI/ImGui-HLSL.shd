@@ -7,6 +7,15 @@ cbuffer cb_Global : register(b0)
     float4x4 u_Camera;
 };
 
+#ifdef ENABLE_TEXTURE_ARRAY
+
+cbuffer cb_Instance : register(b3)
+{
+    uint u_Slice;
+};
+
+#endif // ENABLE_TEXTURE_ARRAY
+
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // Attributes
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -33,7 +42,7 @@ struct ps_Input
 
 ps_Input main(vs_Input Input)
 {
-    ps_Input Result;    
+    ps_Input Result;
 
     Result.Position = mul(u_Camera, float4(Input.Position, 0.0f, 1.0f));
     Result.Texture  = Input.Texture;
@@ -50,12 +59,22 @@ ps_Input main(vs_Input Input)
 
 #ifdef FRAGMENT_SHADER
 
-Texture2D    s_Albedo        : register(t0);
+#ifdef ENABLE_TEXTURE_ARRAY
+Texture2DArray s_Albedo  : register(t0);
+#else
+Texture2D      s_Albedo  : register(t0);
+#endif // ENABLE_TEXTURE_ARRAY
+
 SamplerState s_AlbedoSampler : register(s0);
 
 float4 main(ps_Input Input) : SV_Target
 {
+#ifdef ENABLE_TEXTURE_ARRAY
+    float4 Texel = s_Albedo.Sample(s_AlbedoSampler, float3(Input.Texture, float(u_Slice)));
+#else
     float4 Texel = s_Albedo.Sample(s_AlbedoSampler, Input.Texture);
+#endif // ENABLE_TEXTURE_ARRAY
+
     return Input.Color * Texel;
 }
 

@@ -41,6 +41,18 @@ namespace Plugin
 
     private:
 
+        /// \brief Enumerates the technique variants the renderer draws with, one per sampled texture layout.
+        ///
+        /// \note Each name doubles as the suffix of the manifest it loads, so renaming one renames its file.
+        enum class Kind : UInt8
+        {
+            Texture2D,          ///< Samples a flat texture, the layout every ImGui-owned texture is created with.
+            Texture2DArray,     ///< Samples the slice the draw's instance block names within an array texture.
+        };
+
+        /// \brief Defines a type alias for a collection of rendering techniques.
+        using Techniques = Array<Retainer<Graphic::Technique>, Enum::Count<Kind>()>;
+
         /// Creates a texture resource for ImGui rendering.
         ///
         /// \param Texture The texture data to be created.
@@ -56,12 +68,34 @@ namespace Plugin
         /// \param Texture The texture data to be updated.
         void UpdateTexture(Ptr<ImTextureData> Texture);
 
+    public:
+
+        /// Builds the ImGui texture identifier that samples a texture as a plain 2D image.
+        ///
+        /// \param Handle The 2D texture object to sample.
+        /// \return The identifier accepted by ImGui's image and draw list functions.
+        ZY_INLINE static ImTextureID GetTextureID(Graphic::Object Handle)
+        {
+            return Handle;
+        }
+
+        /// Builds the ImGui texture identifier that samples one slice of an array texture.
+        ///
+        /// \param Handle The array texture object to sample.
+        /// \param Slice  The zero-based slice within the array.
+        /// \return The identifier accepted by ImGui's image and draw list functions.
+        ZY_INLINE static ImTextureID GetTextureID(Graphic::Object Handle, UInt16 Slice)
+        {
+            return static_cast<ImTextureID>(Handle) | ((static_cast<ImTextureID>(Slice) + 1) << 32);
+        }
+
     private:
 
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-        Retainer<Graphic::Service>   mGraphics;
-        Retainer<Graphic::Technique> mTechnique;
+        Retainer<Graphic::Service> mGraphics;
+        Techniques                 mTechniques;
+        Graphic::Object            mSampler;
     };
 }
