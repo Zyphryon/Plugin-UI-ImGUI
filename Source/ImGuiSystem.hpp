@@ -28,8 +28,9 @@ namespace Plugin
 
         /// \brief Initializes the ImGui system with the specified host.
         ///
-        /// \param Host The engine subsystem host used to access platform and graphics services.
-        void Initialize(Ref<Engine::Subsystem::Host> Host);
+        /// \param Host  The engine subsystem host used to access platform and graphics services.
+        /// \param Space The colour space of the target, which picks the techniques that match it.
+        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space);
 
         /// \brief Tears down the ImGui system and releases all resources.
         ///

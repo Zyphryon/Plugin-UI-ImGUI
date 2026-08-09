@@ -288,7 +288,7 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    void ImGuiSystem::Initialize(Ref<Engine::Subsystem::Host> Host)
+    void ImGuiSystem::Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space)
     {
         ConstRetainer<Platform::Service> Platform = Host.GetService<Platform::Service>();
 
@@ -315,7 +315,7 @@ namespace Plugin
         ImGui::StyleColorsDark();
 
         // Initialize the renderer backend for ImGui.
-        mRenderer.Initialize(Host);
+        mRenderer.Initialize(Host, Space);
 
         // Register input event callbacks.
         ConstRetainer<Input::Service> Input = Host.GetService<Input::Service>();

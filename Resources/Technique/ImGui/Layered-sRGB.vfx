@@ -1,0 +1,51 @@
+{
+    "Properties": {
+        "Blend": {
+            "SrcColor": "SrcAlpha",
+            "DstColor": "OneMinusSrcAlpha",
+            "SrcAlpha": "One",
+            "DstAlpha": "OneMinusSrcAlpha"
+        },
+        "Depth": {
+            "Mask": false,
+            "Condition": "Always"
+        },
+        "Rasterizer": {
+            "Cull": "None",
+            "Scissor": true
+        },
+        "Layout": {
+            "Attributes": [
+                [0, "Float32x2",   0,  0],
+                [1, "Float32x2",   0,  8],
+                [2, "UIntNorm8x4", 0, 16]
+            ],
+            "Primitive": "TriangleList"
+        }
+    },
+    "Signature": {
+        "Textures": [
+            { "Name": "Albedo", "Frequency": "Material", "Register": 0, "Visibility": "Fragment" }
+        ],
+        "Uniforms": [
+            { "Name": "Camera", "Frequency": "Frame",    "Type": "Float4", "Count": 4 },
+            { "Name": "Slice",  "Frequency": "Instance", "Type": "UInt" }
+        ]
+    },
+    "Program": {
+        "Defines": [
+            "ENABLE_TEXTURE_ARRAY",
+            "ENABLE_SRGB_TARGET"
+        ],
+        "Shaders": {
+            "GLSL": [
+                { "Path": "Overlay.glsl", "Stage": "Vertex"   },
+                { "Path": "Overlay.glsl", "Stage": "Fragment" }
+            ],
+            "HLSL": [
+                { "Path": "Overlay.hlsl", "Stage": "Vertex"   },
+                { "Path": "Overlay.hlsl", "Stage": "Fragment" }
+            ]
+        }
+    }
+}

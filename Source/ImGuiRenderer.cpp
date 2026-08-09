@@ -31,15 +31,17 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    void ImGuiRenderer::Initialize(Ref<Engine::Subsystem::Host> Host)
+    void ImGuiRenderer::Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space)
     {
         mGraphics = Host.GetService<Graphic::Service>();
 
         ConstRetainer<Content::Service> Content = Host.GetService<Content::Service>();
 
+        // Each kind ships a second variant that decodes the vertex colour, for a target that encodes on write.
         for (const Kind Type : Enum::GetValues<Kind>())
         {
-            Str Path = Str::Print<"Embedded://Technique/ImGui/{0}.vfx">(Enum::GetName(Type));
+            Str Path = Str::Print<"Embedded://Technique/ImGui/{0}{1}.vfx">(
+                Enum::GetName(Type), Space == Colorspace::sRGB ? "-sRGB" : "");
 
             mTechniques[Enum::Cast(Type)] = Content->Load<Graphic::Technique>(Move(Path));
         }

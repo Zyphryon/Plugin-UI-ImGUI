@@ -21,6 +21,13 @@
 
 namespace Plugin
 {
+    /// \brief Names how the target ImGui draws into stores colour.
+    enum class Colorspace : UInt8
+    {
+        Linear,  ///< Stored as written, so a colour reaches the display unchanged.
+        sRGB,    ///< Encoded on write, so a colour is decoded first to survive the round trip.
+    };
+
     /// \brief Handles rendering of ImGui draw data using the engine graphics service.
     class ImGuiRenderer final
     {
@@ -31,8 +38,9 @@ namespace Plugin
 
         /// \brief Initializes the ImGui renderer with the specified host.
         ///
-        /// \param Host The engine subsystem host used to access graphics services.
-        void Initialize(Ref<Engine::Subsystem::Host> Host);
+        /// \param Host  The engine subsystem host used to access graphics services.
+        /// \param Space The colour space of the target, which picks the techniques that match it.
+        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space);
 
         /// \brief Disposes of the renderer and releases all associated resources.
         void Dispose();

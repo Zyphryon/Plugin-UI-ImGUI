@@ -67,6 +67,18 @@ Texture2D      t_Albedo  : register(t0);
 
 SamplerState   s_Albedo  : register(s0);
 
+#ifdef    ENABLE_SRGB_TARGET
+
+float3 ToLinear(float3 Color)
+{
+    const float3 Lower = Color / 12.92;
+    const float3 Upper = pow((Color + 0.055) / 1.055, 2.4);
+
+    return lerp(Lower, Upper, step(0.04045, Color));
+}
+
+#endif // ENABLE_SRGB_TARGET
+
 float4 main(ps_Input Input) : SV_Target
 {
 #ifdef    ENABLE_TEXTURE_ARRAY
@@ -75,7 +87,13 @@ float4 main(ps_Input Input) : SV_Target
     float4 Texel = t_Albedo.Sample(s_Albedo, Input.Texture);
 #endif // ENABLE_TEXTURE_ARRAY
 
-    return Input.Color * Texel;
+#ifdef    ENABLE_SRGB_TARGET
+    const float4 Color = float4(ToLinear(Input.Color.rgb), Input.Color.a);
+#else
+    const float4 Color = Input.Color;
+#endif // ENABLE_SRGB_TARGET
+
+    return Color * Texel;
 }
 
 #endif // FRAGMENT_SHADER

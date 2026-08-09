@@ -55,12 +55,30 @@ uniform sampler2D      t_Albedo;
 in vec2 v_Texture;
 in vec4 v_Color;
 
+#ifdef    ENABLE_SRGB_TARGET
+
+vec3 ToLinear(vec3 Color)
+{
+    vec3 Lower = Color / 12.92;
+    vec3 Upper = pow((Color + 0.055) / 1.055, vec3(2.4));
+
+    return mix(Lower, Upper, step(vec3(0.04045), Color));
+}
+
+#endif // ENABLE_SRGB_TARGET
+
 void main()
 {
-#ifdef    ENABLE_TEXTURE_ARRAY
-    out_Color = v_Color * texture(t_Albedo, vec3(v_Texture, float(u_Slice)));
+#ifdef    ENABLE_SRGB_TARGET
+    vec4 Color = vec4(ToLinear(v_Color.rgb), v_Color.a);
 #else
-    out_Color = v_Color * texture(t_Albedo, v_Texture);
+    vec4 Color = v_Color;
+#endif // ENABLE_SRGB_TARGET
+
+#ifdef    ENABLE_TEXTURE_ARRAY
+    out_Color = Color * texture(t_Albedo, vec3(v_Texture, float(u_Slice)));
+#else
+    out_Color = Color * texture(t_Albedo, v_Texture);
 #endif // ENABLE_TEXTURE_ARRAY
 }
 
