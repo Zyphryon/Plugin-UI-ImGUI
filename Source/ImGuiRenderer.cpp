@@ -38,10 +38,11 @@ namespace Plugin
         ConstRetainer<Content::Service> Content = Host.GetService<Content::Service>();
 
         // Each kind ships a second variant that decodes the vertex colour, for a target that encodes on write.
+		const Text Affix = Space == Colorspace::sRGB ? "-sRGB"_Text : Text::Empty();
+		
         for (const Kind Type : Enum::GetValues<Kind>())
         {
-            Str Path = Str::Print<"Embedded://Technique/ImGui/{0}{1}.vfx">(
-                Enum::GetName(Type), Space == Colorspace::sRGB ? "-sRGB" : "");
+            Str Path = Str::Print<"Embedded://Technique/ImGui/{0}{1}.vfx">(Enum::GetName(Type), Affix);
 
             mTechniques[Enum::Cast(Type)] = Content->Load<Graphic::Technique>(Move(Path));
         }
