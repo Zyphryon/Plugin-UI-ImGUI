@@ -7,7 +7,7 @@ cbuffer cb_Global : register(b0)
     float4x4 u_Camera;
 };
 
-#ifdef ENABLE_TEXTURE_ARRAY
+#ifdef    ENABLE_TEXTURE_ARRAY
 
 cbuffer cb_Instance : register(b3)
 {
@@ -59,20 +59,20 @@ ps_Input main(vs_Input Input)
 
 #ifdef FRAGMENT_SHADER
 
-#ifdef ENABLE_TEXTURE_ARRAY
-Texture2DArray s_Albedo  : register(t0);
+#ifdef    ENABLE_TEXTURE_ARRAY
+Texture2DArray t_Albedo  : register(t0);
 #else
-Texture2D      s_Albedo  : register(t0);
+Texture2D      t_Albedo  : register(t0);
 #endif // ENABLE_TEXTURE_ARRAY
 
-SamplerState s_AlbedoSampler : register(s0);
+SamplerState   s_Albedo  : register(s0);
 
 float4 main(ps_Input Input) : SV_Target
 {
-#ifdef ENABLE_TEXTURE_ARRAY
-    float4 Texel = s_Albedo.Sample(s_AlbedoSampler, float3(Input.Texture, float(u_Slice)));
+#ifdef    ENABLE_TEXTURE_ARRAY
+    float4 Texel = t_Albedo.Sample(s_Albedo, float3(Input.Texture, float(u_Slice)));
 #else
-    float4 Texel = s_Albedo.Sample(s_AlbedoSampler, Input.Texture);
+    float4 Texel = t_Albedo.Sample(s_Albedo, Input.Texture);
 #endif // ENABLE_TEXTURE_ARRAY
 
     return Input.Color * Texel;

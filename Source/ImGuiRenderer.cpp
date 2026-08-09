@@ -23,6 +23,14 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+    ImGuiRenderer::ImGuiRenderer()
+        : mSampler { }
+    {
+    }
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
     void ImGuiRenderer::Initialize(Ref<Engine::Subsystem::Host> Host)
     {
         mGraphics = Host.GetService<Graphic::Service>();
@@ -31,7 +39,7 @@ namespace Plugin
 
         for (const Kind Type : Enum::GetValues<Kind>())
         {
-            Str Path = Str::Print<"Embedded://Technique/UI/ImGui-{0}.vfx">(Enum::GetName(Type));
+            Str Path = Str::Print<"Embedded://Technique/ImGui/{0}.vfx">(Enum::GetName(Type));
 
             mTechniques[Enum::Cast(Type)] = Content->Load<Graphic::Technique>(Move(Path));
         }
@@ -173,8 +181,8 @@ namespace Plugin
                 }
 
                 ConstRetainer<Graphic::Technique> Technique =
-                    Slice > 0 ? mTechniques[Enum::Cast(Kind::Texture2DArray)]
-                              : mTechniques[Enum::Cast(Kind::Texture2D)];
+                    Slice > 0 ? mTechniques[Enum::Cast(Kind::Layered)]
+                              : mTechniques[Enum::Cast(Kind::Flat)];
 
                 GfxCommand.Scissor = Graphic::Scissor(
                     static_cast<UInt16>(MinX),

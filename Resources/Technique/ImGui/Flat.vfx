@@ -34,12 +34,12 @@
     "Program": {
         "Shaders": {
             "GLSL": [
-                { "Path": "ImGui-GLSL.shd", "Stage": "Vertex"   },
-                { "Path": "ImGui-GLSL.shd", "Stage": "Fragment" }
+                { "Path": "Overlay.glsl", "Stage": "Vertex"   },
+                { "Path": "Overlay.glsl", "Stage": "Fragment" }
             ],
             "HLSL": [
-                { "Path": "ImGui-HLSL.shd", "Stage": "Vertex"   },
-                { "Path": "ImGui-HLSL.shd", "Stage": "Fragment" }
+                { "Path": "Overlay.hlsl", "Stage": "Vertex"   },
+                { "Path": "Overlay.hlsl", "Stage": "Fragment" }
             ]
         }
     }

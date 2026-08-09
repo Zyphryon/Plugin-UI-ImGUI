@@ -7,7 +7,7 @@ layout(std140, binding = 0) uniform cb_Global
     mat4 u_Camera;
 };
 
-#ifdef ENABLE_TEXTURE_ARRAY
+#ifdef    ENABLE_TEXTURE_ARRAY
 
 layout(std140, binding = 3) uniform cb_Instance
 {
@@ -32,8 +32,8 @@ out vec4 v_Color;
 void main()
 {
     gl_Position = u_Camera * vec4(a_Position, 0.0, 1.0);
-    v_Texture   = a_Texture;
-    v_Color     = a_Color;
+    v_Texture    = a_Texture;
+    v_Color      = a_Color;
 }
 
 #endif // VERTEX_SHADER
@@ -46,10 +46,10 @@ void main()
 
 layout(location = 0) out vec4 out_Color;
 
-#ifdef ENABLE_TEXTURE_ARRAY
-uniform sampler2DArray s_Albedo;
+#ifdef    ENABLE_TEXTURE_ARRAY
+uniform sampler2DArray t_Albedo;
 #else
-uniform sampler2D      s_Albedo;
+uniform sampler2D      t_Albedo;
 #endif // ENABLE_TEXTURE_ARRAY
 
 in vec2 v_Texture;
@@ -57,10 +57,10 @@ in vec4 v_Color;
 
 void main()
 {
-#ifdef ENABLE_TEXTURE_ARRAY
-    out_Color = v_Color * texture(s_Albedo, vec3(v_Texture, float(u_Slice)));
+#ifdef    ENABLE_TEXTURE_ARRAY
+    out_Color = v_Color * texture(t_Albedo, vec3(v_Texture, float(u_Slice)));
 #else
-    out_Color = v_Color * texture(s_Albedo, v_Texture);
+    out_Color = v_Color * texture(t_Albedo, v_Texture);
 #endif // ENABLE_TEXTURE_ARRAY
 }
 

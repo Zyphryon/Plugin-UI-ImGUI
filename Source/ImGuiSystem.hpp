@@ -21,27 +21,27 @@
 
 namespace Plugin
 {
-    /// System for managing ImGui integration with the engine.
+    /// \brief System for managing ImGui integration with the engine.
     class ImGuiSystem final
     {
     public:
 
-        /// Initializes the ImGui system with the specified host.
+        /// \brief Initializes the ImGui system with the specified host.
         ///
         /// \param Host The engine subsystem host used to access platform and graphics services.
         void Initialize(Ref<Engine::Subsystem::Host> Host);
 
-        /// Tears down the ImGui system and releases all resources.
+        /// \brief Tears down the ImGui system and releases all resources.
         ///
         /// \param Host The engine subsystem host used to access platform and graphics services.
         void Teardown(Ref<Engine::Subsystem::Host> Host);
 
-        /// Begins a new ImGui frame.
+        /// \brief Begins a new ImGui frame.
         ///
         /// \param Time The current frame time in seconds.
         void Begin(Real64 Time);
 
-        /// Ends the current ImGui frame and submits rendering commands.
+        /// \brief Ends the current ImGui frame and submits rendering commands.
         void End();
 
     private:
