@@ -79,6 +79,12 @@ namespace Plugin
 
     public:
 
+        /// \brief Marks an identifier as naming an array texture, so the draw samples the layered technique.
+        static constexpr ImTextureID kLayeredFlag = static_cast<ImTextureID>(1) << 63;
+
+        /// \brief Width of the horizontal coordinate band a single array slice occupies.
+        static constexpr Real32      kSliceStride = 2.0f;
+
         /// \brief Builds the ImGui texture identifier that samples a texture as a plain 2D image.
         ///
         /// \param Handle The 2D texture object to sample.
@@ -88,16 +94,50 @@ namespace Plugin
             return Handle;
         }
 
-        /// \brief Builds the ImGui texture identifier that samples one slice of an array texture.
+        /// \brief Builds the ImGui texture identifier that samples an array texture.
+        ///
+        /// The identifier names the texture alone, so every slice of it shares one identifier and ImGui keeps
+        /// merging consecutive draws into a single command. The slice rides along the texture coordinates
+        /// instead, which \ref GetLayeredTextureUV encodes.
+        ///
+        /// \param Handle The array texture object to sample.
+        /// \return The identifier accepted by ImGui's image and draw list functions.
+        ZY_INLINE static ImTextureID GetLayeredTextureID(Graphic::Object Handle)
+        {
+            return static_cast<ImTextureID>(Handle) | kLayeredFlag;
+        }
+
+        /// \brief Encodes the slice a vertex samples into the texture coordinates it carries.
+        ///
+        /// it holds sub-texel accuracy for a 4096-wide texture up to roughly slice 255, and degrades gradually beyond that.
+        ///
+        /// \param Slice       The zero-based slice within the array.
+        /// \param Coordinates The texture coordinates within that slice, normally within [0, 1].
+        /// \return The encoded coordinates accepted by ImGui's image and draw list functions.
+        ZY_INLINE static ImVec2 GetLayeredTextureUV(UInt16 Slice, ConstRef<ImVec2> Coordinates)
+        {
+            return ImVec2(Coordinates.x + static_cast<Real32>(Slice) * kSliceStride, Coordinates.y);
+        }
+
+        /// \brief Draws one slice of an array texture, pairing the identifier with the coordinates it expects.
         ///
         /// \param Handle The array texture object to sample.
         /// \param Slice  The zero-based slice within the array.
-        /// \return The identifier accepted by ImGui's image and draw list functions.
-        ZY_INLINE static ImTextureID GetTextureID(Graphic::Object Handle, UInt16 Slice)
+        /// \param Size   The size of the image in screen pixels.
+        /// \param Min    The upper left texture coordinates within the slice.
+        /// \param Max    The lower right texture coordinates within the slice.
+        ZY_INLINE static void DrawLayeredImage(
+            Graphic::Object  Handle,
+            UInt16           Slice,
+            ConstRef<ImVec2> Size,
+            ConstRef<ImVec2> Min = ImVec2(0.0f, 0.0f),
+            ConstRef<ImVec2> Max = ImVec2(1.0f, 1.0f))
         {
-            return static_cast<ImTextureID>(Handle) | ((static_cast<ImTextureID>(Slice) + 1) << 32);
+            ImGui::Image(GetLayeredTextureID(Handle),
+                         Size,
+                         GetLayeredTextureUV(Slice, Min),
+                         GetLayeredTextureUV(Slice, Max));
         }
-
     private:
 
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

@@ -28,8 +28,7 @@
             { "Name": "Albedo", "Frequency": "Material", "Register": 0, "Visibility": "Fragment" }
         ],
         "Uniforms": [
-            { "Name": "Camera", "Frequency": "Frame",    "Type": "Float4", "Count": 4 },
-            { "Name": "Slice",  "Frequency": "Instance", "Type": "UInt" }
+            { "Name": "Camera", "Frequency": "Frame", "Type": "Float4", "Count": 4 }
         ]
     },
     "Program": {

@@ -125,7 +125,7 @@ namespace Plugin
                 -1.0f,
                 +1.0f);
 
-        // Captured up front, since the per-draw blocks allocated below share the same arena.
+        // Every draw reads the same camera block, so resolve its stream once.
         const Graphic::Stream Camera = UboSlice.GetStream();
 
         UInt32 VtxOffset = 0;
@@ -158,19 +158,9 @@ namespace Plugin
                     continue;
                 }
 
-                const Graphic::Object Texture = static_cast<Graphic::Object>(Command.GetTexID());
-                const UInt32          Slice   = static_cast<UInt32>(Command.GetTexID() >> 32);
-
-                // Only array draws carry a block; the 2D technique never declares one to read.
-                Graphic::Stream Instance;
-
-                if (Slice > 0)
-                {
-                    Graphic::Transient<UInt32> Block = mGraphics->AllocateInFlightUniforms<UInt32>(1);
-                    Block[0] = Slice - 1;
-
-                    Instance = Block.GetStream();
-                }
+                const ImTextureID     Identifier = Command.GetTexID();
+                const Graphic::Object Texture    = static_cast<Graphic::Object>(Identifier);
+                const Bool            Layered    = (Identifier & kLayeredFlag) != 0;
 
                 Ref<Graphic::Command> GfxCommand = mGraphics->AllocateInFlightCommand();
 
@@ -184,8 +174,8 @@ namespace Plugin
                 }
 
                 ConstRetainer<Graphic::Technique> Technique =
-                    Slice > 0 ? mTechniques[Enum::Cast(Kind::Layered)]
-                              : mTechniques[Enum::Cast(Kind::Flat)];
+                    Layered ? mTechniques[Enum::Cast(Kind::Layered)]
+                            : mTechniques[Enum::Cast(Kind::Flat)];
 
                 GfxCommand.Scissor = Graphic::Scissor(
                     static_cast<UInt16>(MinX),
@@ -195,8 +185,7 @@ namespace Plugin
                 GfxCommand.Pipeline = Technique->GetHandle();
                 GfxCommand.Vertices.Append(Vertices);
                 GfxCommand.Indices = IdxSlice.GetStream();
-                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Frame)]    = Camera;
-                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Instance)] = Instance;
+                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Frame)] = Camera;
                 GfxCommand.Textures.Append(Texture);
                 GfxCommand.Samplers.Append(mSampler);
 
