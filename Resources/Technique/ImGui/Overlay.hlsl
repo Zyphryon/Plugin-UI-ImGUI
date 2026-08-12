@@ -48,7 +48,6 @@ ps_Input main(vs_Input Input)
     Result.Color    = Input.Color;
 
 #ifdef    ENABLE_TEXTURE_ARRAY
-     the slice it names and the coordinate within that slice.
     Result.Slice    = floor(Input.Texture.x / SLICE_STRIDE);
     Result.Texture  = float2(Input.Texture.x - Result.Slice * SLICE_STRIDE, Input.Texture.y);
 #else
