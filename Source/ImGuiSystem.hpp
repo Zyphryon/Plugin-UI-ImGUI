@@ -29,8 +29,24 @@ namespace Plugin
         /// \brief Initializes the ImGui system with the specified host.
         ///
         /// \param Host  The engine subsystem host used to access platform and graphics services.
-        /// \param Space The colour space of the target, which picks the techniques that match it.
-        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space);
+        /// \param Space The colour space the target starts at, which \ref SetColorspace changes afterwards.
+        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space = Colorspace::Linear);
+
+        /// \brief Sets the colour space the target stores, which the next frame's draws are encoded for.
+        ///
+        /// \param Space The colour space of the target.
+        ZY_INLINE void SetColorspace(Colorspace Space)
+        {
+            mRenderer.SetColorspace(Space);
+        }
+
+        /// \brief Gets the colour space the renderer encodes its draws for.
+        ///
+        /// \return The colour space of the target.
+        ZY_INLINE Colorspace GetColorspace() const
+        {
+            return mRenderer.GetColorspace();
+        }
 
         /// \brief Tears down the ImGui system and releases all resources.
         ///

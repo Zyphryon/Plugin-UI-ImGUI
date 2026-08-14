@@ -24,7 +24,9 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
     ImGuiRenderer::ImGuiRenderer()
-        : mSampler { }
+        : mColorspace { Colorspace::Linear },
+          mPipelines  { },
+          mSampler    { }
     {
     }
 
@@ -33,19 +35,19 @@ namespace Plugin
 
     void ImGuiRenderer::Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space)
     {
-        mGraphics = Host.GetService<Graphic::Service>();
+        mGraphics   = Host.GetService<Graphic::Service>();
+        mColorspace = Space;
 
         ConstRetainer<Content::Service> Content = Host.GetService<Content::Service>();
 
-        // Each kind ships a second variant that decodes the vertex colour, for a target that encodes on write.
-		const Text Affix = Space == Colorspace::sRGB ? "-sRGB"_Text : Text::Empty();
-		
-        for (const Kind Type : Enum::GetValues<Kind>())
-        {
-            Str Path = Str::Print<"Embedded://Technique/ImGui/{0}{1}.vfx">(Enum::GetName(Type), Affix);
+        // One technique declares every kind and colour space as a feature, and preloads each combination of them.
+        mTechnique = Content->Load<Graphic::Technique>("Embedded://Technique/ImGui/Overlay.vfx");
 
-            mTechniques[Enum::Cast(Type)] = Content->Load<Graphic::Technique>(Move(Path));
-        }
+        // Loading only queues the request, so resolve the variants once the technique has uploaded them all.
+        Content->Subscribe(mTechnique->GetKey(), [this](Ref<Content::Resource>)
+        {
+            ObtainPipelines();
+        });
 
         mSampler = mGraphics->ObtainSampler(Graphic::Sampler {
             .Filter = Graphic::TextureFilter::Linear
@@ -82,13 +84,10 @@ namespace Plugin
 
     void ImGuiRenderer::Submit(ConstRef<ImDrawData> Commands)
     {
-        // Abort drawing if either technique has not finished loading or compiling.
-        for (ConstRetainer<Graphic::Technique> Technique : mTechniques)
+        // Abort drawing if the technique has not finished loading or compiling.
+        if (!mTechnique->HasCompleted())
         {
-            if (!Technique->HasCompleted())
-            {
-                return;
-            }
+            return;
         }
 
         // Handle all pending texture operations.
@@ -173,16 +172,12 @@ namespace Plugin
                     Vertices.Offset += Base * sizeof(ImDrawVert);
                 }
 
-                ConstRetainer<Graphic::Technique> Technique =
-                    Layered ? mTechniques[Enum::Cast(Kind::Layered)]
-                            : mTechniques[Enum::Cast(Kind::Flat)];
-
                 GfxCommand.Scissor = Graphic::Scissor(
                     static_cast<UInt16>(MinX),
                     static_cast<UInt16>(MinY),
                     static_cast<UInt16>(MaxX - MinX),
                     static_cast<UInt16>(MaxY - MinY));
-                GfxCommand.Pipeline = Technique->GetHandle();
+                GfxCommand.Pipeline = mPipelines[Enum::Cast(Layered ? Kind::Layered : Kind::Flat)];
                 GfxCommand.Vertices.Append(Vertices);
                 GfxCommand.Indices = IdxSlice.GetStream();
                 GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Frame)] = Camera;
@@ -201,6 +196,18 @@ namespace Plugin
             VtxOffset += CommandList->VtxBuffer.Size;
             IdxOffset += CommandList->IdxBuffer.Size;
         }
+    }
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    void ImGuiRenderer::ObtainPipelines()
+    {
+        const Graphic::Technique::Key Layered = mTechnique->Resolve("Layered");
+        const Graphic::Technique::Key Encoded = (mColorspace == Colorspace::sRGB) ? mTechnique->Resolve("sRGB") : 0;
+
+        mPipelines[Enum::Cast(Kind::Flat)]    = mTechnique->Obtain(* mGraphics, Encoded);
+        mPipelines[Enum::Cast(Kind::Layered)] = mTechnique->Obtain(* mGraphics, Encoded | Layered);
     }
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

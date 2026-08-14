@@ -32,10 +32,6 @@
         ]
     },
     "Program": {
-        "Defines": [
-            "ENABLE_TEXTURE_ARRAY",
-            "ENABLE_SRGB_TARGET"
-        ],
         "Shaders": {
             "GLSL": [
                 { "Path": "Overlay.glsl", "Stage": "Vertex"   },
@@ -46,5 +42,14 @@
                 { "Path": "Overlay.hlsl", "Stage": "Fragment" }
             ]
         }
-    }
+    },
+    "Features": [
+        { "Name": "Layered", "Define": "ENABLE_TEXTURE_ARRAY" },
+        { "Name": "sRGB",    "Define": "ENABLE_SRGB_TARGET"   }
+    ],
+    "Preload": [
+        [ "sRGB" ],
+        [ "Layered" ],
+        [ "Layered", "sRGB" ]
+    ]
 }

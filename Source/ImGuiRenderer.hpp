@@ -39,11 +39,37 @@ namespace Plugin
         /// \brief Initializes the ImGui renderer with the specified host.
         ///
         /// \param Host  The engine subsystem host used to access graphics services.
-        /// \param Space The colour space of the target, which picks the techniques that match it.
-        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space);
+        /// \param Space The colour space the target starts at, which \ref SetColorspace changes afterwards.
+        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space = Colorspace::Linear);
 
         /// \brief Disposes of the renderer and releases all associated resources.
         void Dispose();
+
+        /// \brief Sets the colour space the target stores, which every draw is encoded for from here on.
+        ///
+        /// \note Every colour space is compiled up front, so switching one never waits on a shader compile.
+        ///
+        /// \param Space The colour space of the target.
+        ZY_INLINE void SetColorspace(Colorspace Space)
+        {
+            if (mColorspace != Space)
+            {
+                mColorspace = Space;
+
+                if (mTechnique && mTechnique->HasCompleted())
+                {
+                    ObtainPipelines();
+                }
+            }
+        }
+
+        /// \brief Gets the colour space the renderer encodes its draws for.
+        ///
+        /// \return The colour space of the target.
+        ZY_INLINE Colorspace GetColorspace() const
+        {
+            return mColorspace;
+        }
 
         /// \brief Submits ImGui draw commands for rendering.
         ///
@@ -56,11 +82,14 @@ namespace Plugin
         enum class Kind : UInt8
         {
             Flat,        ///< Samples a flat texture, the layout every ImGui-owned texture is created with.
-            Layered,     ///< Samples the slice the draw's instance block names within an array texture.
+            Layered,     ///< Samples the slice the draw's texture coordinates name within an array texture.
         };
 
-        /// \brief Defines a type alias for a collection of rendering techniques.
-        using Techniques = Array<Retainer<Graphic::Technique>, Enum::Count<Kind>()>;
+        /// \brief Defines a type alias for the pipeline of each kind, compiled for the current colour space.
+        using Pipelines = Array<Graphic::Object, Enum::Count<Kind>()>;
+
+        /// \brief Resolves the technique variant each kind draws with under the current colour space.
+        void ObtainPipelines();
 
         /// \brief Creates a texture resource for ImGui rendering.
         ///
@@ -138,13 +167,16 @@ namespace Plugin
                          GetLayeredTextureUV(Slice, Min),
                          GetLayeredTextureUV(Slice, Max));
         }
+        
     private:
 
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-        Retainer<Graphic::Service> mGraphics;
-        Techniques                 mTechniques;
-        Graphic::Object            mSampler;
+        Retainer<Graphic::Service>   mGraphics;
+        Retainer<Graphic::Technique> mTechnique;
+        Pipelines                    mPipelines;
+        Graphic::Object              mSampler;
+        Colorspace                   mColorspace;
     };
 }
