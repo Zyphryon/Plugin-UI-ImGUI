@@ -115,8 +115,7 @@ namespace Plugin
         Graphic::Transient<ImDrawVert> VtxSlice = mGraphics->AllocateInFlightVertices<ImDrawVert>(Commands.TotalVtxCount);
         Graphic::Transient<ImDrawIdx>  IdxSlice = mGraphics->AllocateInFlightIndices<ImDrawIdx>(Commands.TotalIdxCount);
 
-        Graphic::Transient<Matrix4x4> UboSlice = mGraphics->AllocateInFlightUniforms<Matrix4x4>(1);
-        UboSlice[0] = Matrix4x4::CreateOrthographic(
+        const Matrix4x4 Projection = Matrix4x4::CreateOrthographic(
                 Commands.DisplayPos.x,
                 Commands.DisplayPos.x + Commands.DisplaySize.x,
                 Commands.DisplayPos.y + Commands.DisplaySize.y,
@@ -124,8 +123,8 @@ namespace Plugin
                 -1.0f,
                 +1.0f);
 
-        // Every draw reads the same camera block, so resolve its stream once.
-        const Graphic::Stream Camera = UboSlice.GetStream();
+        // Every draw reads the same camera block, so it is written once and its stream handed to each.
+        const Graphic::Stream Camera = mGraphics->AllocateInFlightUniforms<Matrix4x4>(ConstSpan<Matrix4x4>(Projection));
 
         UInt32 VtxOffset = 0;
         UInt32 IdxOffset = 0;
