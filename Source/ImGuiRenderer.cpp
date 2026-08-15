@@ -202,8 +202,8 @@ namespace Plugin
 
     void ImGuiRenderer::ObtainPipelines()
     {
-        const Graphic::Technique::Key Layered = mTechnique->Resolve("Layered");
-        const Graphic::Technique::Key Encoded = (mColorspace == Colorspace::sRGB) ? mTechnique->Resolve("sRGB") : 0;
+        const Graphic::Technique::Key Layered = mTechnique->ResolveByName("Layered");
+        const Graphic::Technique::Key Encoded = (mColorspace == Colorspace::sRGB) ? mTechnique->ResolveByName("sRGB") : 0;
 
         mPipelines[Enum::Cast(Kind::Flat)]    = mTechnique->Obtain(* mGraphics, Encoded);
         mPipelines[Enum::Cast(Kind::Layered)] = mTechnique->Obtain(* mGraphics, Encoded | Layered);
