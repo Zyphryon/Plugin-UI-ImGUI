@@ -104,7 +104,10 @@ namespace Plugin
                     UpdateTexture(Texture);
                     break;
                 case ImTextureStatus_WantDestroy:
-                    DeleteTexture(Texture);
+                    if (Texture->UnusedFrames >= Graphic::kMaxFrames)
+                    {
+                        DeleteTexture(Texture);
+                    }
                     break;
                 default:
                     break;
