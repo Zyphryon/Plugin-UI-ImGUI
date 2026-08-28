@@ -233,6 +233,9 @@ namespace Plugin
             return;
         }
 
+        Blob Pixels = Blob::Allocate<Byte>(Size);
+        Pixels.Copy<Byte>(static_cast<ConstPtr<Byte>>(Texture->GetPixels()), Size);
+
         const Graphic::Object Handle = mGraphics->CreateTexture(
             Graphic::TextureLayout::Texture2D,
             Format,
@@ -243,7 +246,7 @@ namespace Plugin
             1,
             1,
             Graphic::Multisample::X1,
-            Blob::Borrow<Byte>(static_cast<ConstPtr<Byte>>(Texture->GetPixels()), Size));
+            Move(Pixels));
         Texture->SetTexID(Handle);
         Texture->SetStatus(ImTextureStatus_OK);
     }
@@ -274,6 +277,9 @@ namespace Plugin
         {
             const UInt32 Size = (H - 1) * Pitch + W * Texture->BytesPerPixel;
 
+            Blob Pixels = Blob::Allocate<Byte>(Size);
+            Pixels.Copy<Byte>(static_cast<ConstPtr<Byte>>(Texture->GetPixelsAt(X, Y)), Size);
+
             mGraphics->UpdateTexture(
                 Texture->GetTexID(),
                 0,
@@ -283,7 +289,7 @@ namespace Plugin
                 W,
                 H,
                 Pitch,
-                Blob::Borrow<Byte>(static_cast<ConstPtr<Byte>>(Texture->GetPixelsAt(X, Y)), Size));
+                Move(Pixels));
         }
         Texture->SetStatus(ImTextureStatus_OK);
     }
