@@ -68,7 +68,7 @@ flat in float v_Slice;
 
 #ifdef    ENABLE_SRGB_TARGET
 
-vec3 sRGBEncode(vec3 Color)
+vec3 sRGBDecode(vec3 Color)
 {
     vec3 Lower = Color / 12.92;
     vec3 Upper = pow((Color + 0.055) / 1.055, vec3(2.4));
@@ -78,10 +78,22 @@ vec3 sRGBEncode(vec3 Color)
 
 #endif // ENABLE_SRGB_TARGET
 
+#ifdef    ENABLE_SRGB_ENCODE
+
+vec3 sRGBEncode(vec3 Color)
+{
+    vec3 Lower = Color * 12.92;
+    vec3 Upper = 1.055 * pow(Color, vec3(1.0 / 2.4)) - 0.055;
+
+    return mix(Lower, Upper, step(vec3(0.0031308), Color));
+}
+
+#endif // ENABLE_SRGB_ENCODE
+
 void main()
 {
 #ifdef    ENABLE_SRGB_TARGET
-    vec4 Color = vec4(sRGBEncode(v_Color.rgb), v_Color.a);
+    vec4 Color = vec4(sRGBDecode(v_Color.rgb), v_Color.a);
 #else
     vec4 Color = v_Color;
 #endif // ENABLE_SRGB_TARGET
@@ -91,6 +103,10 @@ void main()
 #else
     out_Color = Color * texture(t_Albedo, v_Texture);
 #endif // ENABLE_TEXTURE_ARRAY
+
+#ifdef    ENABLE_SRGB_ENCODE
+    out_Color.rgb = sRGBEncode(out_Color.rgb);
+#endif // ENABLE_SRGB_ENCODE
 }
 
 #endif // FRAGMENT_SHADER

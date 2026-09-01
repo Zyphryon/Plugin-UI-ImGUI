@@ -75,7 +75,7 @@ SamplerState   s_Albedo  : register(s0);
 
 #ifdef    ENABLE_SRGB_TARGET
 
-float3 sRGBEncode(float3 Color)
+float3 sRGBDecode(float3 Color)
 {
     const float3 Lower = Color / 12.92;
     const float3 Upper = pow((Color + 0.055) / 1.055, 2.4);
@@ -84,6 +84,18 @@ float3 sRGBEncode(float3 Color)
 }
 
 #endif // ENABLE_SRGB_TARGET
+
+#ifdef    ENABLE_SRGB_ENCODE
+
+float3 sRGBEncode(float3 Color)
+{
+    const float3 Lower = Color * 12.92;
+    const float3 Upper = 1.055 * pow(Color, 1.0 / 2.4) - 0.055;
+
+    return lerp(Lower, Upper, step(0.0031308, Color));
+}
+
+#endif // ENABLE_SRGB_ENCODE
 
 float4 main(ps_Input Input) : SV_Target
 {
@@ -94,12 +106,18 @@ float4 main(ps_Input Input) : SV_Target
 #endif // ENABLE_TEXTURE_ARRAY
 
 #ifdef    ENABLE_SRGB_TARGET
-    const float4 Color = float4(sRGBEncode(Input.Color.rgb), Input.Color.a);
+    const float4 Color = float4(sRGBDecode(Input.Color.rgb), Input.Color.a);
 #else
     const float4 Color = Input.Color;
 #endif // ENABLE_SRGB_TARGET
 
-    return Color * Texel;
+    float4 Result = Color * Texel;
+
+#ifdef    ENABLE_SRGB_ENCODE
+    Result.rgb = sRGBEncode(Result.rgb);
+#endif // ENABLE_SRGB_ENCODE
+
+    return Result;
 }
 
 #endif // FRAGMENT_SHADER

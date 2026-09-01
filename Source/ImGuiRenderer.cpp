@@ -206,10 +206,15 @@ namespace Plugin
     void ImGuiRenderer::ObtainPipelines()
     {
         const Graphic::Technique::Key Layered = mTechnique->ResolveByName("Layered");
-        const Graphic::Technique::Key Encoded = (mColorspace == Colorspace::sRGB) ? mTechnique->ResolveByName("sRGB") : 0;
 
-        mPipelines[Enum::Cast(Kind::Flat)]    = mTechnique->Obtain(* mGraphics, Encoded);
-        mPipelines[Enum::Cast(Kind::Layered)] = mTechnique->Obtain(* mGraphics, Encoded | Layered);
+        const Bool Decodes = (mColorspace == Colorspace::sRGB || mColorspace == Colorspace::sRGBUnmanaged);
+        const Bool Encodes = (mColorspace == Colorspace::sRGBUnmanaged);
+
+        const Graphic::Technique::Key Decoded = Decodes ? mTechnique->ResolveByName("sRGB") : 0;
+        const Graphic::Technique::Key Encoded = Encodes ? mTechnique->ResolveByName("Encode") : 0;
+
+        mPipelines[Enum::Cast(Kind::Flat)]    = mTechnique->Obtain(* mGraphics, Decoded | Encoded);
+        mPipelines[Enum::Cast(Kind::Layered)] = mTechnique->Obtain(* mGraphics, Decoded | Encoded | Layered);
     }
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

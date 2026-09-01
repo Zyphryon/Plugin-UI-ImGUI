@@ -45,11 +45,14 @@
     },
     "Features": [
         { "Name": "Layered", "Define": "ENABLE_TEXTURE_ARRAY" },
-        { "Name": "sRGB",    "Define": "ENABLE_SRGB_TARGET"   }
+        { "Name": "sRGB",    "Define": "ENABLE_SRGB_TARGET"   },
+        { "Name": "Encode",  "Define": "ENABLE_SRGB_ENCODE"   }
     ],
     "Preload": [
         [ "sRGB" ],
         [ "Layered" ],
-        [ "Layered", "sRGB" ]
+        [ "Layered", "sRGB" ],
+        [ "sRGB", "Encode" ],
+        [ "Layered", "sRGB", "Encode" ]
     ]
 }

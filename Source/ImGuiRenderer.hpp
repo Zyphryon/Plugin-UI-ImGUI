@@ -24,8 +24,9 @@ namespace Plugin
     /// \brief Names how the target ImGui draws into stores colour.
     enum class Colorspace : UInt8
     {
-        Linear,  ///< Stored as written, so a colour reaches the display unchanged.
-        sRGB,    ///< Encoded on write, so a colour is decoded first to survive the round trip.
+        Linear,          ///< Stored as written, so a colour reaches the display unchanged.
+        sRGB,            ///< Encoded on write, so a colour is decoded first to survive the round trip.
+        sRGBUnmanaged,   ///< Stores sRGB but encodes none of it, so the encoding is done before handing it over.
     };
 
     /// \brief Handles rendering of ImGui draw data using the engine graphics service.
