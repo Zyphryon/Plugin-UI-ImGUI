@@ -54,9 +54,9 @@ void main()
 layout(location = 0) out vec4 out_Color;
 
 #ifdef    ENABLE_TEXTURE_ARRAY
-uniform sampler2DArray t_Albedo;
+layout(binding = 0) uniform sampler2DArray t_Albedo;
 #else
-uniform sampler2D      t_Albedo;
+layout(binding = 0) uniform sampler2D      t_Albedo;
 #endif // ENABLE_TEXTURE_ARRAY
 
 in vec2 v_Texture;
