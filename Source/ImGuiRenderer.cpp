@@ -33,27 +33,27 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    void ImGuiRenderer::Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space)
+    void ImGuiRenderer::Initialize(Ref<ZyEngine::Subsystem::Host> Host, Colorspace Space)
     {
-        mGraphics   = Host.GetService<Graphic::Service>();
+        mGraphics   = Host.GetService<ZyGraphic::Service>();
         mColorspace = Space;
 
-        ConstRetainer<Content::Service> Content = Host.GetService<Content::Service>();
+        ConstRetainer<ZyContent::Service> Content = Host.GetService<ZyContent::Service>();
 
         // One technique declares every kind and colour space as a feature, and preloads each combination of them.
-        mTechnique = Content->Load<Graphic::Technique>("Embedded://Technique/ImGui/Overlay.vfx");
+        mTechnique = Content->Load<ZyGraphic::Technique>("Embedded://Technique/ImGui/Overlay.vfx");
 
         // Loading only queues the request, so resolve the variants once the technique has uploaded them all.
-        Content->Subscribe(mTechnique->GetKey(), [this](Ref<Content::Resource>)
+        Content->Subscribe(mTechnique->GetKey(), [this](Ref<ZyContent::Resource>)
         {
             ObtainPipelines();
         });
 
-        mSampler = mGraphics->ObtainSampler(Graphic::Sampler {
-            .Filter = Graphic::TextureFilter::Linear
+        mSampler = mGraphics->ObtainSampler(ZyGraphic::Sampler {
+            .Filter = ZyGraphic::TextureFilter::Linear
         });
 
-        ConstRef<Graphic::Capabilities> Capabilities = mGraphics->GetDescription().Capabilities;
+        ConstRef<ZyGraphic::Capabilities> Capabilities = mGraphics->GetDescription().Capabilities;
 
         Ref<ImGuiIO> IO = ImGui::GetIO();
         IO.BackendRendererName = "Zyphryon";
@@ -104,7 +104,7 @@ namespace Plugin
                     UpdateTexture(Texture);
                     break;
                 case ImTextureStatus_WantDestroy:
-                    if (Texture->UnusedFrames >= Graphic::kMaxFrames)
+                    if (Texture->UnusedFrames >= ZyGraphic::kMaxFrames)
                     {
                         DeleteTexture(Texture);
                     }
@@ -115,8 +115,8 @@ namespace Plugin
             }
         }
 
-        Graphic::Transient<ImDrawVert> VtxSlice = mGraphics->AllocateInFlightVertices<ImDrawVert>(Commands.TotalVtxCount);
-        Graphic::Transient<ImDrawIdx>  IdxSlice = mGraphics->AllocateInFlightIndices<ImDrawIdx>(Commands.TotalIdxCount);
+        ZyGraphic::Transient<ImDrawVert> VtxSlice = mGraphics->AllocateInFlightVertices<ImDrawVert>(Commands.TotalVtxCount);
+        ZyGraphic::Transient<ImDrawIdx>  IdxSlice = mGraphics->AllocateInFlightIndices<ImDrawIdx>(Commands.TotalIdxCount);
 
         const Matrix4x4 Projection = Matrix4x4::CreateOrthographic(
                 Commands.DisplayPos.x,
@@ -127,7 +127,7 @@ namespace Plugin
                 +1.0f);
 
         // Every draw reads the same camera block, so it is written once and its stream handed to each.
-        const Graphic::Stream Camera = mGraphics->AllocateInFlightUniforms<Matrix4x4>(ConstSpan<Matrix4x4>(Projection));
+        const ZyGraphic::Stream Camera = mGraphics->AllocateInFlightUniforms<Matrix4x4>(ConstSpan<Matrix4x4>(Projection));
 
         UInt32 VtxOffset = 0;
         UInt32 IdxOffset = 0;
@@ -160,29 +160,29 @@ namespace Plugin
                 }
 
                 const ImTextureID     Identifier = Command.GetTexID();
-                const Graphic::Object Texture    = static_cast<Graphic::Object>(Identifier);
+                const ZyGraphic::Object Texture    = static_cast<ZyGraphic::Object>(Identifier);
                 const Bool            Layered    = (Identifier & kLayeredFlag) != 0;
 
-                Ref<Graphic::Command> GfxCommand = mGraphics->AllocateInFlightCommand();
+                Ref<ZyGraphic::Command> GfxCommand = mGraphics->AllocateInFlightCommand();
 
                 // Devices without base-vertex support ignore vertex base offset.
                 const UInt32    Base     = VtxOffset + Command.VtxOffset;
-                Graphic::Stream Vertices = VtxSlice.GetStream();
+                ZyGraphic::Stream Vertices = VtxSlice.GetStream();
 
                 if (!SupportsVertexBaseOffset)
                 {
                     Vertices.Offset += Base * sizeof(ImDrawVert);
                 }
 
-                GfxCommand.Scissor = Graphic::Scissor(
+                GfxCommand.Scissor = ZyGraphic::Scissor(
                     static_cast<UInt16>(MinX),
                     static_cast<UInt16>(MinY),
                     static_cast<UInt16>(MaxX - MinX),
                     static_cast<UInt16>(MaxY - MinY));
-                GfxCommand.Pipeline = mPipelines[Enum::Cast(Layered ? Kind::Layered : Kind::Flat)];
+                GfxCommand.Pipeline = mPipelines[ZyEnum::Cast(Layered ? Kind::Layered : Kind::Flat)];
                 GfxCommand.Vertices.Append(Vertices);
                 GfxCommand.Indices = IdxSlice.GetStream();
-                GfxCommand.Uniforms[Enum::Cast(Graphic::Frequency::Frame)] = Camera;
+                GfxCommand.Uniforms[ZyEnum::Cast(ZyGraphic::Frequency::Frame)] = Camera;
                 GfxCommand.Textures.Append(Texture);
                 GfxCommand.Samplers.Append(mSampler);
 
@@ -205,16 +205,16 @@ namespace Plugin
 
     void ImGuiRenderer::ObtainPipelines()
     {
-        const Graphic::Technique::Key Layered = mTechnique->ResolveByName("Layered");
+        const ZyGraphic::Technique::Key Layered = mTechnique->ResolveByName("Layered");
 
         const Bool Decodes = (mColorspace == Colorspace::sRGB || mColorspace == Colorspace::sRGBUnmanaged);
         const Bool Encodes = (mColorspace == Colorspace::sRGBUnmanaged);
 
-        const Graphic::Technique::Key Decoded = Decodes ? mTechnique->ResolveByName("sRGB") : 0;
-        const Graphic::Technique::Key Encoded = Encodes ? mTechnique->ResolveByName("Encode") : 0;
+        const ZyGraphic::Technique::Key Decoded = Decodes ? mTechnique->ResolveByName("sRGB") : 0;
+        const ZyGraphic::Technique::Key Encoded = Encodes ? mTechnique->ResolveByName("Encode") : 0;
 
-        mPipelines[Enum::Cast(Kind::Flat)]    = mTechnique->Obtain(* mGraphics, Decoded | Encoded);
-        mPipelines[Enum::Cast(Kind::Layered)] = mTechnique->Obtain(* mGraphics, Decoded | Encoded | Layered);
+        mPipelines[ZyEnum::Cast(Kind::Flat)]    = mTechnique->Obtain(* mGraphics, Decoded | Encoded);
+        mPipelines[ZyEnum::Cast(Kind::Layered)] = mTechnique->Obtain(* mGraphics, Decoded | Encoded | Layered);
     }
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -223,15 +223,15 @@ namespace Plugin
     void ImGuiRenderer::CreateTexture(Ptr<ImTextureData> Texture)
     {
         const UInt32           Size = Texture->Height * Texture->Width * Texture->BytesPerPixel;
-        Graphic::TextureFormat Format;
+        ZyGraphic::TextureFormat Format;
 
         switch (Texture->Format)
         {
         case ImTextureFormat_RGBA32:
-            Format = Graphic::TextureFormat::RGBA8UIntNorm;
+            Format = ZyGraphic::TextureFormat::RGBA8UIntNorm;
             break;
         case ImTextureFormat_Alpha8:
-            Format = Graphic::TextureFormat::R8UIntNorm;
+            Format = ZyGraphic::TextureFormat::R8UIntNorm;
             break;
         default:
             ZY_ASSERT(false, "Unsupported ImGui texture format");
@@ -241,16 +241,16 @@ namespace Plugin
         Blob Pixels = Blob::Allocate<Byte>(Size);
         Pixels.Copy<Byte>(static_cast<ConstPtr<Byte>>(Texture->GetPixels()), Size);
 
-        const Graphic::Object Handle = mGraphics->CreateTexture(
-            Graphic::TextureLayout::Texture2D,
+        const ZyGraphic::Object Handle = mGraphics->CreateTexture(
+            ZyGraphic::TextureLayout::Texture2D,
             Format,
-            Graphic::Storage::Stream,
-            Graphic::Usage::Sample,
+            ZyGraphic::Storage::Stream,
+            ZyGraphic::Usage::Sample,
             Texture->Width,
             Texture->Height,
             1,
             1,
-            Graphic::Multisample::X1,
+            ZyGraphic::Multisample::X1,
             Move(Pixels));
         Texture->SetTexID(Handle);
         Texture->SetStatus(ImTextureStatus_OK);
@@ -261,7 +261,7 @@ namespace Plugin
 
     void ImGuiRenderer::DeleteTexture(Ptr<ImTextureData> Texture)
     {
-        if (const Graphic::Object Handle = Texture->GetTexID(); Handle)
+        if (const ZyGraphic::Object Handle = Texture->GetTexID(); Handle)
         {
             mGraphics->DeleteTexture(Handle);
 

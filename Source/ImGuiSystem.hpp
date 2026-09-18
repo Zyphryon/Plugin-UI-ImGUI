@@ -30,7 +30,7 @@ namespace Plugin
         ///
         /// \param Host  The engine subsystem host used to access platform and graphics services.
         /// \param Space The colour space the target starts at, which \ref SetColorspace changes afterwards.
-        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space = Colorspace::Linear);
+        void Initialize(Ref<ZyEngine::Subsystem::Host> Host, Colorspace Space = Colorspace::Linear);
 
         /// \brief Sets the colour space the target stores, which the next frame's draws are encoded for.
         ///
@@ -51,7 +51,7 @@ namespace Plugin
         /// \brief Tears down the ImGui system and releases all resources.
         ///
         /// \param Host The engine subsystem host used to access platform and graphics services.
-        void Teardown(Ref<Engine::Subsystem::Host> Host);
+        void Teardown(Ref<ZyEngine::Subsystem::Host> Host);
 
         /// \brief Begins a new ImGui frame.
         ///
@@ -67,10 +67,10 @@ namespace Plugin
         static Bool OnKeyType(Text Text);
 
         /// \brief Handles key release events.
-        static Bool OnKeyUp(Input::Key Key);
+        static Bool OnKeyUp(ZyInput::Key Key);
 
         /// \brief Handles key press events.
-        static Bool OnKeyDown(Input::Key Key);
+        static Bool OnKeyDown(ZyInput::Key Key);
 
         /// \brief Handles mouse movement events.
         static Bool OnMouseMove(Real32 X, Real32 Y, Real32 DeltaX, Real32 DeltaY);
@@ -79,10 +79,10 @@ namespace Plugin
         static Bool OnMouseScroll(Real32 DeltaX, Real32 DeltaY);
 
         /// \brief Handles mouse button release events.
-        static Bool OnMouseUp(Input::Button Button);
+        static Bool OnMouseUp(ZyInput::Button Button);
 
         /// \brief Handles mouse button press events.
-        static Bool OnMouseDown(Input::Button Button);
+        static Bool OnMouseDown(ZyInput::Button Button);
 
         /// \brief Handles window focus change events.
         static Bool OnWindowFocus(Bool Focused);

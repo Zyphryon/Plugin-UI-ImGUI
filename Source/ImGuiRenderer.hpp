@@ -41,7 +41,7 @@ namespace Plugin
         ///
         /// \param Host  The engine subsystem host used to access graphics services.
         /// \param Space The colour space the target starts at, which \ref SetColorspace changes afterwards.
-        void Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space = Colorspace::Linear);
+        void Initialize(Ref<ZyEngine::Subsystem::Host> Host, Colorspace Space = Colorspace::Linear);
 
         /// \brief Disposes of the renderer and releases all associated resources.
         void Dispose();
@@ -87,7 +87,7 @@ namespace Plugin
         };
 
         /// \brief Defines a type alias for the pipeline of each kind, compiled for the current colour space.
-        using Pipelines = Array<Graphic::Object, Enum::Count<Kind>()>;
+        using Pipelines = Array<ZyGraphic::Object, ZyEnum::Count<Kind>()>;
 
         /// \brief Resolves the technique variant each kind draws with under the current colour space.
         void ObtainPipelines();
@@ -119,7 +119,7 @@ namespace Plugin
         ///
         /// \param Handle The 2D texture object to sample.
         /// \return The identifier accepted by ImGui's image and draw list functions.
-        ZY_INLINE static ImTextureID GetTextureID(Graphic::Object Handle)
+        ZY_INLINE static ImTextureID GetTextureID(ZyGraphic::Object Handle)
         {
             return Handle;
         }
@@ -132,7 +132,7 @@ namespace Plugin
         ///
         /// \param Handle The array texture object to sample.
         /// \return The identifier accepted by ImGui's image and draw list functions.
-        ZY_INLINE static ImTextureID GetLayeredTextureID(Graphic::Object Handle)
+        ZY_INLINE static ImTextureID GetLayeredTextureID(ZyGraphic::Object Handle)
         {
             return static_cast<ImTextureID>(Handle) | kLayeredFlag;
         }
@@ -157,11 +157,11 @@ namespace Plugin
         /// \param Min    The upper left texture coordinates within the slice.
         /// \param Max    The lower right texture coordinates within the slice.
         ZY_INLINE static void DrawLayeredImage(
-            Graphic::Object  Handle,
-            UInt16           Slice,
-            ConstRef<ImVec2> Size,
-            ConstRef<ImVec2> Min = ImVec2(0.0f, 0.0f),
-            ConstRef<ImVec2> Max = ImVec2(1.0f, 1.0f))
+            ZyGraphic::Object Handle,
+            UInt16            Slice,
+            ConstRef<ImVec2>  Size,
+            ConstRef<ImVec2>  Min = ImVec2(0.0f, 0.0f),
+            ConstRef<ImVec2>  Max = ImVec2(1.0f, 1.0f))
         {
             ImGui::Image(GetLayeredTextureID(Handle),
                          Size,
@@ -174,10 +174,10 @@ namespace Plugin
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-        Retainer<Graphic::Service>   mGraphics;
-        Retainer<Graphic::Technique> mTechnique;
-        Pipelines                    mPipelines;
-        Graphic::Object              mSampler;
-        Colorspace                   mColorspace;
+        Retainer<ZyGraphic::Service>   mGraphics;
+        Retainer<ZyGraphic::Technique> mTechnique;
+        Pipelines                      mPipelines;
+        ZyGraphic::Object              mSampler;
+        Colorspace                     mColorspace;
     };
 }

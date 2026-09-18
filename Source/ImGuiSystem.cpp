@@ -23,217 +23,217 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    static ImGuiKey GetKey(Input::Key Key)
+    static ImGuiKey GetKey(ZyInput::Key Key)
     {
         switch (Key)
         {
-        case Input::Key::Space:
+        case ZyInput::Key::Space:
             return ImGuiKey_Space;
-        case Input::Key::Apostrophe:
+        case ZyInput::Key::Apostrophe:
             return ImGuiKey_Apostrophe;
-        case Input::Key::Comma:
+        case ZyInput::Key::Comma:
             return ImGuiKey_Comma;
-        case Input::Key::Minus:
+        case ZyInput::Key::Minus:
             return ImGuiKey_Minus;
-        case Input::Key::Period:
+        case ZyInput::Key::Period:
             return ImGuiKey_Period;
-        case Input::Key::Slash:
+        case ZyInput::Key::Slash:
             return ImGuiKey_Slash;
-        case Input::Key::Alpha0:
+        case ZyInput::Key::Alpha0:
             return ImGuiKey_0;
-        case Input::Key::Alpha1:
+        case ZyInput::Key::Alpha1:
             return ImGuiKey_1;
-        case Input::Key::Alpha2:
+        case ZyInput::Key::Alpha2:
             return ImGuiKey_2;
-        case Input::Key::Alpha3:
+        case ZyInput::Key::Alpha3:
             return ImGuiKey_3;
-        case Input::Key::Alpha4:
+        case ZyInput::Key::Alpha4:
             return ImGuiKey_4;
-        case Input::Key::Alpha5:
+        case ZyInput::Key::Alpha5:
             return ImGuiKey_5;
-        case Input::Key::Alpha6:
+        case ZyInput::Key::Alpha6:
             return ImGuiKey_6;
-        case Input::Key::Alpha7:
+        case ZyInput::Key::Alpha7:
             return ImGuiKey_7;
-        case Input::Key::Alpha8:
+        case ZyInput::Key::Alpha8:
             return ImGuiKey_8;
-        case Input::Key::Alpha9:
+        case ZyInput::Key::Alpha9:
             return ImGuiKey_9;
-        case Input::Key::Semicolon:
+        case ZyInput::Key::Semicolon:
             return ImGuiKey_Semicolon;
-        case Input::Key::Equal:
+        case ZyInput::Key::Equal:
             return ImGuiKey_Equal;
-        case Input::Key::A:
+        case ZyInput::Key::A:
             return ImGuiKey_A;
-        case Input::Key::B:
+        case ZyInput::Key::B:
             return ImGuiKey_B;
-        case Input::Key::C:
+        case ZyInput::Key::C:
             return ImGuiKey_C;
-        case Input::Key::D:
+        case ZyInput::Key::D:
             return ImGuiKey_D;
-        case Input::Key::E:
+        case ZyInput::Key::E:
             return ImGuiKey_E;
-        case Input::Key::F:
+        case ZyInput::Key::F:
             return ImGuiKey_F;
-        case Input::Key::G:
+        case ZyInput::Key::G:
             return ImGuiKey_G;
-        case Input::Key::H:
+        case ZyInput::Key::H:
             return ImGuiKey_H;
-        case Input::Key::I:
+        case ZyInput::Key::I:
             return ImGuiKey_I;
-        case Input::Key::J:
+        case ZyInput::Key::J:
             return ImGuiKey_J;
-        case Input::Key::K:
+        case ZyInput::Key::K:
             return ImGuiKey_K;
-        case Input::Key::L:
+        case ZyInput::Key::L:
             return ImGuiKey_L;
-        case Input::Key::M:
+        case ZyInput::Key::M:
             return ImGuiKey_M;
-        case Input::Key::N:
+        case ZyInput::Key::N:
             return ImGuiKey_N;
-        case Input::Key::O:
+        case ZyInput::Key::O:
             return ImGuiKey_O;
-        case Input::Key::P:
+        case ZyInput::Key::P:
             return ImGuiKey_P;
-        case Input::Key::Q:
+        case ZyInput::Key::Q:
             return ImGuiKey_Q;
-        case Input::Key::R:
+        case ZyInput::Key::R:
             return ImGuiKey_R;
-        case Input::Key::S:
+        case ZyInput::Key::S:
             return ImGuiKey_S;
-        case Input::Key::T:
+        case ZyInput::Key::T:
             return ImGuiKey_T;
-        case Input::Key::U:
+        case ZyInput::Key::U:
             return ImGuiKey_U;
-        case Input::Key::V:
+        case ZyInput::Key::V:
             return ImGuiKey_V;
-        case Input::Key::W:
+        case ZyInput::Key::W:
             return ImGuiKey_W;
-        case Input::Key::X:
+        case ZyInput::Key::X:
             return ImGuiKey_X;
-        case Input::Key::Y:
+        case ZyInput::Key::Y:
             return ImGuiKey_Y;
-        case Input::Key::Z:
+        case ZyInput::Key::Z:
             return ImGuiKey_Z;
-        case Input::Key::Backslash:
+        case ZyInput::Key::Backslash:
             return ImGuiKey_Backslash;
-        case Input::Key::Grave:
+        case ZyInput::Key::Grave:
             return ImGuiKey_GraveAccent;
-        case Input::Key::Escape:
+        case ZyInput::Key::Escape:
             return ImGuiKey_Escape;
-        case Input::Key::Enter:
+        case ZyInput::Key::Enter:
             return ImGuiKey_Enter;
-        case Input::Key::Tab:
+        case ZyInput::Key::Tab:
             return ImGuiKey_Tab;
-        case Input::Key::Backspace:
+        case ZyInput::Key::Backspace:
             return ImGuiKey_Backspace;
-        case Input::Key::Insert:
+        case ZyInput::Key::Insert:
             return ImGuiKey_Insert;
-        case Input::Key::Delete:
+        case ZyInput::Key::Delete:
             return ImGuiKey_Delete;
-        case Input::Key::Right:
+        case ZyInput::Key::Right:
             return ImGuiKey_RightArrow;
-        case Input::Key::Left:
+        case ZyInput::Key::Left:
             return ImGuiKey_LeftArrow;
-        case Input::Key::Down:
+        case ZyInput::Key::Down:
             return ImGuiKey_DownArrow;
-        case Input::Key::Up:
+        case ZyInput::Key::Up:
             return ImGuiKey_UpArrow;
-        case Input::Key::PageUp:
+        case ZyInput::Key::PageUp:
             return ImGuiKey_PageUp;
-        case Input::Key::PageDown:
+        case ZyInput::Key::PageDown:
             return ImGuiKey_PageDown;
-        case Input::Key::Home:
+        case ZyInput::Key::Home:
             return ImGuiKey_Home;
-        case Input::Key::End:
+        case ZyInput::Key::End:
             return ImGuiKey_End;
-        case Input::Key::Capital:
+        case ZyInput::Key::Capital:
             return ImGuiKey_CapsLock;
-        case Input::Key::Scroll:
+        case ZyInput::Key::Scroll:
             return ImGuiKey_ScrollLock;
-        case Input::Key::NumLock:
+        case ZyInput::Key::NumLock:
             return ImGuiKey_NumLock;
-        case Input::Key::Print:
+        case ZyInput::Key::Print:
             return ImGuiKey_PrintScreen;
-        case Input::Key::Pause:
+        case ZyInput::Key::Pause:
             return ImGuiKey_Pause;
-        case Input::Key::F1:
+        case ZyInput::Key::F1:
             return ImGuiKey_F1;
-        case Input::Key::F2:
+        case ZyInput::Key::F2:
             return ImGuiKey_F2;
-        case Input::Key::F3:
+        case ZyInput::Key::F3:
             return ImGuiKey_F3;
-        case Input::Key::F4:
+        case ZyInput::Key::F4:
             return ImGuiKey_F4;
-        case Input::Key::F5:
+        case ZyInput::Key::F5:
             return ImGuiKey_F5;
-        case Input::Key::F6:
+        case ZyInput::Key::F6:
             return ImGuiKey_F6;
-        case Input::Key::F7:
+        case ZyInput::Key::F7:
             return ImGuiKey_F7;
-        case Input::Key::F8:
+        case ZyInput::Key::F8:
             return ImGuiKey_F8;
-        case Input::Key::F9:
+        case ZyInput::Key::F9:
             return ImGuiKey_F9;
-        case Input::Key::F10:
+        case ZyInput::Key::F10:
             return ImGuiKey_F10;
-        case Input::Key::F11:
+        case ZyInput::Key::F11:
             return ImGuiKey_F11;
-        case Input::Key::F12:
+        case ZyInput::Key::F12:
             return ImGuiKey_F12;
-        case Input::Key::Keypad0:
+        case ZyInput::Key::Keypad0:
             return ImGuiKey_Keypad0;
-        case Input::Key::Keypad1:
+        case ZyInput::Key::Keypad1:
             return ImGuiKey_Keypad1;
-        case Input::Key::Keypad2:
+        case ZyInput::Key::Keypad2:
             return ImGuiKey_Keypad2;
-        case Input::Key::Keypad3:
+        case ZyInput::Key::Keypad3:
             return ImGuiKey_Keypad3;
-        case Input::Key::Keypad4:
+        case ZyInput::Key::Keypad4:
             return ImGuiKey_Keypad4;
-        case Input::Key::Keypad5:
+        case ZyInput::Key::Keypad5:
             return ImGuiKey_Keypad5;
-        case Input::Key::Keypad6:
+        case ZyInput::Key::Keypad6:
             return ImGuiKey_Keypad6;
-        case Input::Key::Keypad7:
+        case ZyInput::Key::Keypad7:
             return ImGuiKey_Keypad7;
-        case Input::Key::Keypad8:
+        case ZyInput::Key::Keypad8:
             return ImGuiKey_Keypad8;
-        case Input::Key::Keypad9:
+        case ZyInput::Key::Keypad9:
             return ImGuiKey_Keypad9;
-        case Input::Key::Decimal:
+        case ZyInput::Key::Decimal:
             return ImGuiKey_KeypadDecimal;
-        case Input::Key::Divide:
+        case ZyInput::Key::Divide:
             return ImGuiKey_KeypadDivide;
-        case Input::Key::Multiply:
+        case ZyInput::Key::Multiply:
             return ImGuiKey_KeypadMultiply;
-        case Input::Key::Subtract:
+        case ZyInput::Key::Subtract:
             return ImGuiKey_KeypadSubtract;
-        case Input::Key::Add:
+        case ZyInput::Key::Add:
             return ImGuiKey_KeypadAdd;
-        case Input::Key::LeftBracket:
+        case ZyInput::Key::LeftBracket:
             return ImGuiKey_LeftBracket;
-        case Input::Key::LeftShift:
+        case ZyInput::Key::LeftShift:
             return ImGuiKey_LeftShift;
-        case Input::Key::LeftCtrl:
+        case ZyInput::Key::LeftCtrl:
             return ImGuiKey_LeftCtrl;
-        case Input::Key::LeftAlt:
+        case ZyInput::Key::LeftAlt:
             return ImGuiKey_LeftAlt;
-        case Input::Key::LeftSuper:
+        case ZyInput::Key::LeftSuper:
             return ImGuiKey_LeftSuper;
-        case Input::Key::Menu:
+        case ZyInput::Key::Menu:
             return ImGuiKey_Menu;
-        case Input::Key::RightBracket:
+        case ZyInput::Key::RightBracket:
             return ImGuiKey_RightBracket;
-        case Input::Key::RightShift:
+        case ZyInput::Key::RightShift:
             return ImGuiKey_RightShift;
-        case Input::Key::RightCtrl:
+        case ZyInput::Key::RightCtrl:
             return ImGuiKey_RightCtrl;
-        case Input::Key::RightAlt:
+        case ZyInput::Key::RightAlt:
             return ImGuiKey_RightAlt;
-        case Input::Key::RightSuper:
+        case ZyInput::Key::RightSuper:
             return ImGuiKey_RightSuper;
-        case Input::Key::Unknown:
+        case ZyInput::Key::Unknown:
             break;
         }
         return ImGuiKey_None;
@@ -242,21 +242,21 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    static ImGuiKey GetKeyModifier(Input::Key Key)
+    static ImGuiKey GetKeyModifier(ZyInput::Key Key)
     {
         switch (Key)
         {
-        case Input::Key::LeftCtrl:
-        case Input::Key::RightCtrl:
+        case ZyInput::Key::LeftCtrl:
+        case ZyInput::Key::RightCtrl:
             return ImGuiMod_Ctrl;
-        case Input::Key::LeftAlt:
-        case Input::Key::RightAlt:
+        case ZyInput::Key::LeftAlt:
+        case ZyInput::Key::RightAlt:
             return ImGuiMod_Alt;
-        case Input::Key::LeftShift:
-        case Input::Key::RightShift:
+        case ZyInput::Key::LeftShift:
+        case ZyInput::Key::RightShift:
             return ImGuiMod_Shift;
-        case Input::Key::LeftSuper:
-        case Input::Key::RightSuper:
+        case ZyInput::Key::LeftSuper:
+        case ZyInput::Key::RightSuper:
             return ImGuiMod_Super;
         default:
             return ImGuiMod_None;
@@ -266,19 +266,19 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    static ImGuiMouseButton GetButton(Input::Button Button)
+    static ImGuiMouseButton GetButton(ZyInput::Button Button)
     {
         switch (Button)
         {
-        case Input::Button::Left:
-            return Enum::Cast(ImGuiMouseButton_Left);
-        case Input::Button::Middle:
-            return Enum::Cast(ImGuiMouseButton_Middle);
-        case Input::Button::Right:
-            return Enum::Cast(ImGuiMouseButton_Right);
-        case Input::Button::Back:
+        case ZyInput::Button::Left:
+            return ZyEnum::Cast(ImGuiMouseButton_Left);
+        case ZyInput::Button::Middle:
+            return ZyEnum::Cast(ImGuiMouseButton_Middle);
+        case ZyInput::Button::Right:
+            return ZyEnum::Cast(ImGuiMouseButton_Right);
+        case ZyInput::Button::Back:
             return 3;
-        case Input::Button::Forward:
+        case ZyInput::Button::Forward:
             return 4;
         default:
             return -1;
@@ -288,13 +288,13 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    void ImGuiSystem::Initialize(Ref<Engine::Subsystem::Host> Host, Colorspace Space)
+    void ImGuiSystem::Initialize(Ref<ZyEngine::Subsystem::Host> Host, Colorspace Space)
     {
-        ConstRetainer<Platform::Service> Platform = Host.GetService<Platform::Service>();
+        ConstRetainer<ZyPlatform::Service> Platform = Host.GetService<ZyPlatform::Service>();
 
         // Fetches the window and the monitor the window is at.
-        ConstRef<Platform::Window>        Window  = Platform->GetWindow();
-        const ConstPtr<Platform::Monitor> Monitor = Platform->GetDisplay().GetMonitor(Window.GetX(), Window.GetY());
+        ConstRef<ZyPlatform::Window>        Window  = Platform->GetWindow();
+        const ConstPtr<ZyPlatform::Monitor> Monitor = Platform->GetDisplay().GetMonitor(Window.GetX(), Window.GetY());
         ZY_ASSERT(Monitor, "Failed to get monitor for the window");
 
         const Real32 Width  = static_cast<Real32>(Window.GetWidth());
@@ -318,7 +318,7 @@ namespace Plugin
         mRenderer.Initialize(Host, Space);
 
         // Register input event callbacks.
-        ConstRetainer<Input::Service> Input = Host.GetService<Input::Service>();
+        ConstRetainer<ZyInput::Service> Input = Host.GetService<ZyInput::Service>();
 
         Input->OnKeyDown.AddFunction<&ImGuiSystem::OnKeyDown>();
         Input->OnKeyUp.AddFunction<&ImGuiSystem::OnKeyUp>();
@@ -334,13 +334,13 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    void ImGuiSystem::Teardown(Ref<Engine::Subsystem::Host> Host)
+    void ImGuiSystem::Teardown(Ref<ZyEngine::Subsystem::Host> Host)
     {
         // Dispose of the renderer backend.
         mRenderer.Dispose();
 
         // Releases all input event callbacks.
-        ConstRetainer<Input::Service> Input = Host.GetService<Input::Service>();
+        ConstRetainer<ZyInput::Service> Input = Host.GetService<ZyInput::Service>();
 
         Input->OnKeyDown.RemoveFunction<&ImGuiSystem::OnKeyDown>();
         Input->OnKeyUp.RemoveFunction<&ImGuiSystem::OnKeyUp>();
@@ -393,7 +393,7 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    Bool ImGuiSystem::OnKeyUp(Input::Key Key)
+    Bool ImGuiSystem::OnKeyUp(ZyInput::Key Key)
     {
         if (const auto ImModifier = GetKeyModifier(Key); ImModifier != ImGuiMod_None)
         {
@@ -409,7 +409,7 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    Bool ImGuiSystem::OnKeyDown(Input::Key Key)
+    Bool ImGuiSystem::OnKeyDown(ZyInput::Key Key)
     {
         if (const auto ImModifier = GetKeyModifier(Key); ImModifier != ImGuiMod_None)
         {
@@ -443,7 +443,7 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    Bool ImGuiSystem::OnMouseUp(Input::Button Button)
+    Bool ImGuiSystem::OnMouseUp(ZyInput::Button Button)
     {
         if (const auto ImButton = GetButton(Button); ImButton >= 0)
         {
@@ -455,7 +455,7 @@ namespace Plugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    Bool ImGuiSystem::OnMouseDown(Input::Button Button)
+    Bool ImGuiSystem::OnMouseDown(ZyInput::Button Button)
     {
         if (const auto ImButton = GetButton(Button); ImButton >= 0)
         {
