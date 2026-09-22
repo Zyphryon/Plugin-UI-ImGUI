@@ -19,7 +19,7 @@
 // [   CODE   ]
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-namespace Plugin
+namespace ZyPlugin
 {
     /// \brief System for managing ImGui integration with the engine.
     class ImGuiSystem final

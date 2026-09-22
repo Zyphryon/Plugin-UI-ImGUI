@@ -19,7 +19,7 @@
 // [   CODE   ]
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-namespace Plugin
+namespace ZyPlugin
 {
     /// \brief Names how the target ImGui draws into stores colour.
     enum class Colorspace : UInt8
