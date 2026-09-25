@@ -144,7 +144,7 @@ namespace ZyPlugin
         /// \param Slice       The zero-based slice within the array.
         /// \param Coordinates The texture coordinates within that slice, normally within [0, 1].
         /// \return The encoded coordinates accepted by ImGui's image and draw list functions.
-        ZY_INLINE static ImVec2 GetLayeredTextureUV(UInt16 Slice, ConstRef<ImVec2> Coordinates)
+        ZY_INLINE static ImVec2 GetLayeredTextureUV(UInt16 Slice, ImVec2 Coordinates)
         {
             return ImVec2(Coordinates.x + static_cast<Real32>(Slice) * kSliceStride, Coordinates.y);
         }
@@ -159,16 +159,35 @@ namespace ZyPlugin
         ZY_INLINE static void DrawLayeredImage(
             ZyGraphic::Object Handle,
             UInt16            Slice,
-            ConstRef<ImVec2>  Size,
-            ConstRef<ImVec2>  Min = ImVec2(0.0f, 0.0f),
-            ConstRef<ImVec2>  Max = ImVec2(1.0f, 1.0f))
+            ImVec2            Size,
+            ImVec2            Min = ImVec2(0.0f, 0.0f),
+            ImVec2            Max = ImVec2(1.0f, 1.0f))
         {
             ImGui::Image(GetLayeredTextureID(Handle),
                          Size,
                          GetLayeredTextureUV(Slice, Min),
                          GetLayeredTextureUV(Slice, Max));
         }
-        
+
+        /// \brief Checks whether a texture a pass rendered into reaches ImGui upside down.
+        ///
+        /// \return `true` if the active renderer draws through GL, otherwise `false`.
+        static Bool IsTargetFlipped();
+
+        /// \brief Draws a texture a pass rendered into, the right way up on every driver.
+        ///
+        /// \param Handle The texture the pass rendered into.
+        /// \param Size   The size of the image in screen pixels.
+        static void DrawTargetImage(ZyGraphic::Object Handle, ImVec2 Size);
+
+        /// \brief Adds a texture a pass rendered into to a draw list, the right way up on every driver.
+        ///
+        /// \param List   The draw list to add the image to.
+        /// \param Handle The texture the pass rendered into.
+        /// \param Min    The upper left corner of the image, in screen pixels.
+        /// \param Max    The lower right corner of the image, in screen pixels.
+        static void AddTargetImage(Ptr<ImDrawList> List, ZyGraphic::Object Handle, ImVec2 Min, ImVec2 Max);
+
     private:
 
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

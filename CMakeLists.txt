@@ -12,7 +12,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.26)
 ## Project
 ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-PROJECT(ZyPlugin_UI_ImGui VERSION 1.0.0 LANGUAGES CXX)
+PROJECT(ZyPlugin_ImGui VERSION 1.0.0 LANGUAGES CXX)
 
 ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ## Plugins
@@ -50,13 +50,12 @@ FetchContent_MakeAvailable(External_ImGUI)
 
 ADD_LIBRARY(ImGUI STATIC
         "${external_imgui_SOURCE_DIR}/imgui.cpp"
-        "${external_imgui_SOURCE_DIR}/imgui_demo.cpp"
         "${external_imgui_SOURCE_DIR}/imgui_draw.cpp"
         "${external_imgui_SOURCE_DIR}/imgui_tables.cpp"
-        "${external_imgui_SOURCE_DIR}/imgui_widgets.cpp"
-        "${external_imgui_SOURCE_DIR}/misc/cpp/imgui_stdlib.cpp")
+        "${external_imgui_SOURCE_DIR}/imgui_widgets.cpp")
 
-TARGET_INCLUDE_DIRECTORIES(ImGUI PUBLIC ${external_imgui_SOURCE_DIR})
+TARGET_INCLUDE_DIRECTORIES(ImGUI PUBLIC ${external_imgui_SOURCE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/Source")
+TARGET_COMPILE_DEFINITIONS(ImGUI PUBLIC IMGUI_USER_CONFIG="ImGuiConfig.hpp")
 
 ZyApplyOptions(ImGUI)
 

@@ -8,25 +8,29 @@ This plugin integrates [Dear ImGui](https://github.com/ocornut/imgui) with [Zyph
 
 - Full Dear ImGui integration (UI context, styling, docking, navigation).
 - Plug-and-play: minimal boilerplate required to start using ImGui in your project.
+- ImGui speaks the engine's types (`ImGuiExtensions.hpp`), with no standard library involved.
 
 ---
 
 ## Usage
 
 ```cpp
-#include <Plugin/ImGuiSystem.hpp>
+#include <ImGuiSystem.hpp>
+#include <ImGuiExtensions.hpp>
 
-Plugin::ImGuiSystem mImGui;
+ZyPlugin::ImGuiSystem mImGui;
 
 // During initialization
-mImGui.Initialize(Host, Device);
+mImGui.Initialize(Host);
 
 // In your frame loop
 mImGui.Begin(Time);
 
-// Use ImGui normally
+// Use ImGui normally, with the engine's types where they fit
 ImGui::Begin("Demo");
-ImGui::Text("Hello from Zyphryon + ImGui!");
+ImGui::Text<"Hello from Zyphryon + ImGui, frame {0}">(Frame);
+ImGui::InputText("Name", mName);
+ImGui::Combo("Mode", mMode);
 ImGui::End();
 
 // Render UI

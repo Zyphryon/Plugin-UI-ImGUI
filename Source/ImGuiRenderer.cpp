@@ -24,9 +24,8 @@ namespace ZyPlugin
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
     ImGuiRenderer::ImGuiRenderer()
-        : mColorspace { Colorspace::Linear },
-          mPipelines  { },
-          mSampler    { }
+        : mSampler    { },
+          mColorspace { Colorspace::Linear }
     {
     }
 
@@ -56,7 +55,8 @@ namespace ZyPlugin
         ConstRef<ZyGraphic::Capabilities> Capabilities = mGraphics->GetDescription().Capabilities;
 
         Ref<ImGuiIO> IO = ImGui::GetIO();
-        IO.BackendRendererName = "Zyphryon";
+        IO.BackendRendererName     = "Zyphryon";
+        IO.BackendRendererUserData = this;
         IO.BackendFlags = SetBit(IO.BackendFlags, ImGuiBackendFlags_RendererHasTextures);
         IO.BackendFlags = SetBit(IO.BackendFlags, ImGuiBackendFlags_RendererHasVtxOffset);
 
@@ -77,6 +77,7 @@ namespace ZyPlugin
                 DeleteTexture(Texture);
             }
         }
+        ImGui::GetIO().BackendRendererUserData = nullptr;
     }
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -159,9 +160,9 @@ namespace ZyPlugin
                     continue;
                 }
 
-                const ImTextureID     Identifier = Command.GetTexID();
+                const ImTextureID       Identifier = Command.GetTexID();
                 const ZyGraphic::Object Texture    = static_cast<ZyGraphic::Object>(Identifier);
-                const Bool            Layered    = (Identifier & kLayeredFlag) != 0;
+                const Bool              Layered    = (Identifier & kLayeredFlag) != 0;
 
                 Ref<ZyGraphic::Command> GfxCommand = mGraphics->AllocateInFlightCommand();
 
@@ -297,5 +298,40 @@ namespace ZyPlugin
                 Move(Pixels));
         }
         Texture->SetStatus(ImTextureStatus_OK);
+    }
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    Bool ImGuiRenderer::IsTargetFlipped()
+    {
+        const ConstPtr<ImGuiRenderer> Renderer
+            = static_cast<ConstPtr<ImGuiRenderer>>(ImGui::GetIO().BackendRendererUserData);
+
+        return Renderer && Renderer->mGraphics->GetDescription().Language == ZyGraphic::ShaderLanguage::GLSL;
+    }
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    void ImGuiRenderer::DrawTargetImage(ZyGraphic::Object Handle, ImVec2 Size)
+    {
+        const Bool Flipped = IsTargetFlipped();
+
+        ImGui::Image(GetTextureID(Handle), Size,
+            ImVec2(0.0f, Flipped ? 1.0f : 0.0f),
+            ImVec2(1.0f, Flipped ? 0.0f : 1.0f));
+    }
+
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    void ImGuiRenderer::AddTargetImage(Ptr<ImDrawList> List, ZyGraphic::Object Handle, ImVec2 Min, ImVec2 Max)
+    {
+        const Bool Flipped = IsTargetFlipped();
+
+        List->AddImage(GetTextureID(Handle), Min, Max,
+            ImVec2(0.0f, Flipped ? 1.0f : 0.0f),
+            ImVec2(1.0f, Flipped ? 0.0f : 1.0f));
     }
 }
